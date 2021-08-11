@@ -1,62 +1,88 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-        <link rel="stylesheet" href="estilo.css">
-    </head>
-    <body>
-        <header>
-            <form>
-                <input autofocus type='text' id='msg' placeholder="Digite seu login" autocomplete="off" /> 
-                <button id="button1" type='submit'>Logar</button>
-            </form>
-        </header>
-        <ul id='messages'></ul>
-        <div id='status'></div>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+    <title>always yellow september</title>
+    <link rel="stylesheet" href="estilo.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-            $(function(){
-                const socket = io()
-                socket.nickname = ''
+    <!-- Bootstrap -->
+    <link href="bootstrap-5.1.0-dist/css/bootstrap.min.css" rel="stylesheet">
 
-                $('form').submit(function(){
-                    if(socket.nickname === ''){
-                        socket.nickname = $('#msg').val()
-                        socket.emit('login', socket.nickname)
 
-                        $('#msg').prop('placeholder', 'Digite uma mensagem');
-                        $('#button1').html('Enviar');
+  </head>
+  <body>
+    <h1>Chat</h1>
+<div class="flex-box container-box">
+    <form id="form"> 
+  <div class="form-group">
+ 
+    <input type="text"  id="msg"  autofocus autocomplete="off"  placeholder="Interaja no chat">
+    <button type="submit" class="btn btn-primary">Enviar</button>
+   </div>
+  
+  </div>
+  
 
-                        socket.on('status', function (msg) {
-                            $('#status').html(msg)
-                            console.log(msg)
-                        })
+</form>
+<P class="blocktext">
+    <ul id="mensagens"></ul>
+    <div id="status"></div>
+</P>
 
-                        $('#msg').keypress(function (evt) {
-                            if (socket.nickname === '') {
-                                return
-                            }
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      $(function(){
 
-                            socket.emit('status', socket.nickname + ' está escrevendo...')
-                        })
+        const socket=io()
+        socket.nickname=''
+        $('form').submit(function(evt){
+          if(socket.nickname==''){
 
-                        $('#msg').keyup(function (evt) {
-                            socket.emit('status', '')
-                        })                        
-                    } else {
-                        socket.emit('chat msg', $('#msg').val())
-                    }
+              socket.nickname=$('#msg').val()
+              socket.emit('login',socket.nickname)
 
-                    $('#msg').val('')
-                    return false
-                })
 
-                socket.on('chat msg', function(msg){
-                    $('#messages').append($('<li>').text(msg))
-                })
-            })
-        </script>
-    </body>
+       $('#msg').keypress(function(evt){
+
+        socket.emit('status',`${socket.nickname} está digitando....`)
+       })
+
+          $('#msg').keyup(function(evt){
+
+        socket.emit('status','')
+       })
+         socket.on('status',function(msg){
+          $('#status').html(msg)
+
+          })
+
+          }else{
+
+            socket.emit('chat msg',$('#msg').val())  
+          }
+            $('#msg').val('')
+            return false
+        })
+
+        socket.on('chat msg',function(msg){
+          $('#mensagens').append($('<li>').text(msg))
+
+          })
+
+      
+
+      })
+    </script>
+
+  
+  </body>
 </html>
